@@ -8,8 +8,8 @@ namespace Producer.Models;
 
 public class LiveAssets
 {
-    public int Id { get; set; }
+    public int AssetId { get; set; }
     public string AssetType { get; set; } = string.Empty;
     public string RawValue { get; set; } = string.Empty;
-    public DateTime TimeStamp { get; set; }
+    public DateTime Timestamp { get; set; }
 }
