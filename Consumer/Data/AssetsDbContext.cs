@@ -13,12 +13,20 @@ public class AssetsDbContext : DbContext
         : base(options) 
     { }
 
-    public DbSet<LiveAssetsEvent> Assets { get; set; }
+    public DbSet<AssetLiveStatuses> AssetLiveStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<LiveAssetsEvent>().HasKey(e => e.AssetId);
+        //modelBuilder.Entity<AssetLiveStatuses>()
+        //    .HasOne(a => a.Asset)
+        //    .WithMany(a => a.LiveAssests)
+        //    .HasForeignKey(a => a.AssetId)
+        //    .IsRequired()
+        //    .OnDelete(DeleteBehavior.Cascade);
+            
+
+        modelBuilder.Entity<AssetLiveStatuses>().HasKey(e => e.AssetId);
     }
 }
