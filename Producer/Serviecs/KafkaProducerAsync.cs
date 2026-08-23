@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Producer.Models;
+using System.Text.Json;
 
 namespace Producer.Serviecs;
 
@@ -55,9 +56,11 @@ public class KafkaProducerAsync
 
     public async Task<DeliveryResult<Null, string>> SendAsync(string topicName, LiveAssets asset)
     {
+        var value = JsonSerializer.Serialize(asset);
+
         var message = new Message<Null, string>
         {
-            Value = asset.ToString()
+            Value = value
         };
 
         var result = await _producer.ProduceAsync(topicName, message);
