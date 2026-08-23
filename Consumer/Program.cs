@@ -1,11 +1,9 @@
 ﻿using Confluent.Kafka;
 using Consumer.Data;
-using Consumer.Models;
 using Consumer.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.WebSockets;
 
 public class Program
 {
@@ -52,7 +50,7 @@ public class Program
                 try
                 {
                     consumer.Subscribe(configuration["Kafka:Topics:Uav"]);
-                    Console.WriteLine("Getting Data");
+                    Console.WriteLine("Reading From Kafka");
                     var readingUav = consumer.Consume(TimeSpan.FromSeconds(1));
                     if (readingUav == null || readingUav.Message?.Value == null)
                         continue;
@@ -60,27 +58,30 @@ public class Program
                     Console.WriteLine($"Got reading: {readingUav.Message.Value}");
                     using (var scope = serviceProvider.CreateScope())
                     {
-                        var create2 = scope.ServiceProvider.GetRequiredService<ProcesserAsync>();
+                        var process = scope.ServiceProvider.GetRequiredService<ProcesserAsync>();
 
-                        var success = await create2.AddToDb(readingUav.Message.Value);
+                        var success = await process.ProcessDataAsync(readingUav.Message.Value);
                         consumer.Commit();
                     }
-
                     consumer.Unsubscribe();
+
                     consumer.Subscribe(configuration["Kafka:Topics:Sensor"]);
                     Console.WriteLine("Getting Data");
                     var readingSensor = consumer.Consume(TimeSpan.FromSeconds(1));
-                    Console.WriteLine($"Got reading: {readingSensor.Message.Value}");
+
                     if (readingSensor == null || readingSensor.Message?.Value == null)
                         continue;
 
+                    Console.WriteLine($"Got reading: {readingSensor.Message.Value}");
+
                     using (var scope = serviceProvider.CreateScope())
                     {
-                        var create2 = scope.ServiceProvider.GetRequiredService<ProcesserAsync>();
+                        var process = scope.ServiceProvider.GetRequiredService<ProcesserAsync>();
 
-                        var success = await create2.AddToDb(readingSensor.Message.Value);
+                        var success = await process.ProcessDataAsync(readingSensor.Message.Value);
                         consumer.Commit();
                     }
+                    consumer.Unsubscribe();
                 }
                 catch (Exception ex)
                 {

@@ -1,12 +1,6 @@
 ﻿using Consumer.Data;
 using Consumer.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Collections;
-using System.Data;
-using System.Linq.Expressions;
 using System.Text.Json;
-using static System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable;
 
 namespace Consumer.Service;
 
@@ -19,7 +13,7 @@ public class ProcesserAsync
         _context = context;
     }
 
-    public async Task<bool> AddToDb(string assets)
+    public async Task<bool> ProcessDataAsync(string assets)
     {
         try
         {
@@ -29,11 +23,6 @@ public class ProcesserAsync
                 return false;
 
             var older = _context.AssetLiveStatuses.FirstOrDefault(t => t.AssetId == asset.AssetId);
-            //AssetLiveStatuses? older;
-            //if (_context.AssetLiveStatuses.Count(t => t.AssetId > 0) == 0)
-            //     older = null;
-            //else
-            //    older = _context.AssetLiveStatuses.Where(t => t.AssetId == asset.AssetId).FirstOrDefault();
             string rawValue = asset.RawValue;
             string processedStatus = "warning";
             bool isVerified = false;
