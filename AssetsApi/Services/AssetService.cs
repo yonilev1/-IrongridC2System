@@ -1,6 +1,7 @@
 ﻿using AssetsApi.Dtos;
 using AssetsApi.Models;
 using Consumer.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetsApi.Services;
@@ -64,4 +65,18 @@ public class AssetService : IAssetService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<AssetsEvent>> GetAllWithStatus()
+    {
+        var query = await _context.Assets.ToListAsync();
+
+        foreach (AssetsEvent asst in query)
+        {
+            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
+            if (live != null)
+                asst.LiveAssets = live;
+        }
+        return query;
+    }
+
 }

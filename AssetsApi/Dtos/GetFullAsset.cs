@@ -1,15 +1,14 @@
-﻿using System.Text.Json.Serialization;
+﻿using AssetsApi.Models;
+using System.Text.Json.Serialization;
 
-namespace AssetsApi.Models;
+namespace AssetsApi.Dtos;
 
-public class AssetsEvent
+public class GetFullAsset
 {
     public int Id { get; set; }
     public int UnitId { get; set; }
     public string AssetSerial { get; set; } = string.Empty;
     public string AssetType { get; set; } = string.Empty;
     [JsonIgnore]
-    public UnitsEvent Unit { get; set; } = null!;
-    //[JsonIgnore]
     public AssetLiveStatuses? LiveAssets { get; set; }
 }

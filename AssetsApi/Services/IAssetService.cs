@@ -8,4 +8,5 @@ public interface IAssetService
     Task<bool> CreateUnit(UnitsEvent unit);
     Task<bool> UpdateAsset(int id, UpdateAsset asset);
     Task<bool> DeleteAsset(int id);
+    Task<IEnumerable<AssetsEvent>> GetAllWithStatus();
 }
