@@ -22,4 +22,16 @@ public class AssetsController :ControllerBase
             return NotFound();
         return Ok(asset);
     }
+
+    [HttpPost("units")]
+    public async Task<IActionResult> Create(UnitsEvent unit)
+    {
+        bool created = await _repository.CreateUnit(unit);
+        if (created == true)
+        {
+            return CreatedAtAction(nameof(Create), unit);
+        }
+        
+        return BadRequest();
+    }
 }

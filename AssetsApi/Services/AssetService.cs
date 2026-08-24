@@ -24,4 +24,17 @@ public class AssetService : IAssetService
         }
         return asset;
     }
+
+    public async Task<bool> CreateUnit(UnitsEvent unit)
+    {
+        if (await _context.Units.FirstOrDefaultAsync(a => a.Id == unit.Id) != null)
+            return false;
+
+        await _context.Units.AddAsync(unit);
+        await _context.SaveChangesAsync();
+
+        if (await _context.Units.FirstOrDefaultAsync(a => a.Id == unit.Id) == null)
+            return false;
+        return true;
+    }
 }
