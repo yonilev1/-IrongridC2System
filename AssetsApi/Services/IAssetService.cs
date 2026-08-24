@@ -9,4 +9,5 @@ public interface IAssetService
     Task<bool> UpdateAsset(int id, UpdateAsset asset);
     Task<bool> DeleteAsset(int id);
     Task<IEnumerable<AssetsEvent>> GetAllWithStatus();
+    Task<AssetsEvent?> GetFullAssetWithStatus(int id);
 }

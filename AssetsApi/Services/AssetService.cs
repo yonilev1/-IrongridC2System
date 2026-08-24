@@ -18,12 +18,12 @@ public class AssetService : IAssetService
     public async Task<AssetsEvent?> GetAssetById(int id)
     {
         var asset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
-        if (asset != null)
-        {
-            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
-            if (live != null)
-                asset.LiveAssets = live;
-        }
+        //if (asset != null)
+        //{
+        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
+        //    if (live != null)
+        //        asset.LiveAssets = live;
+        //}
         return asset;
     }
 
@@ -77,6 +77,18 @@ public class AssetService : IAssetService
                 asst.LiveAssets = live;
         }
         return query;
+    }
+
+    public async Task<AssetsEvent?> GetFullAssetWithStatus(int id)
+    {
+        var asset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
+        if (asset != null)
+        {
+            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
+            if (live != null)
+                asset.LiveAssets = live;
+        }
+        return asset;
     }
 
 }

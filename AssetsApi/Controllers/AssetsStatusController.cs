@@ -20,4 +20,13 @@ public class AssetsStatusController : ControllerBase
     {
         return Ok(await _repository.GetAllWithStatus());
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AssetsEvent?>> GetFullAssetWithStatus(int id)
+    {
+        var asset = await _repository.GetFullAssetWithStatus(id);
+        if (asset == null)
+            return NotFound();
+        return Ok(asset);
+    }
 }
