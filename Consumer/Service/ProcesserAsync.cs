@@ -93,6 +93,7 @@ public class ProcesserAsync
                     older.LastUpdate = fullAsset.LastUpdate;
                     older.ProcessedStatus = fullAsset.ProcessedStatus;
                     older.RawValue = fullAsset.RawValue;
+                    _context.AssetLiveStatuses.Update(older);
                     await _context.SaveChangesAsync();
                     Console.WriteLine($"Updated Asset in Db. Asset Id: {fullAsset.AssetId}, Asset Type: {fullAsset.AssetType}.");
                     return true;
