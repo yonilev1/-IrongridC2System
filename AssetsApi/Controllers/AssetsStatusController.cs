@@ -3,6 +3,9 @@ using AssetsApi.Models;
 using AssetsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 namespace AssetsApi.Controllers;
 
 [ApiController]
@@ -10,9 +13,11 @@ namespace AssetsApi.Controllers;
 public class AssetsStatusController : ControllerBase
 {
     private readonly IAssetService _repository;
+    
     public AssetsStatusController(IAssetService repository)
     {
         _repository = repository;
+        
     }
 
     [HttpGet]

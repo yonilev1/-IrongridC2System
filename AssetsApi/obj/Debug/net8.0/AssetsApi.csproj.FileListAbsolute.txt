@@ -106,3 +106,10 @@ C:\Users\Yonil\IrongridC2System\AssetsApi\obj\Debug\net8.0\refint\AssetsApi.dll
 C:\Users\Yonil\IrongridC2System\AssetsApi\obj\Debug\net8.0\AssetsApi.pdb
 C:\Users\Yonil\IrongridC2System\AssetsApi\obj\Debug\net8.0\AssetsApi.genruntimeconfig.cache
 C:\Users\Yonil\IrongridC2System\AssetsApi\obj\Debug\net8.0\ref\AssetsApi.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\RESPite.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\StackExchange.Redis.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\System.IO.Hashing.dll
+C:\Users\Yonil\IrongridC2System\AssetsApi\bin\Debug\net8.0\System.IO.Pipelines.dll

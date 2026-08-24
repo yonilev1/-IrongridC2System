@@ -3,27 +3,27 @@ using AssetsApi.Models;
 using Consumer.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace AssetsApi.Services;
 
 public class AssetService : IAssetService
 {
     private readonly AssetsDbContext _context;
+    private readonly IDatabase _redis;
 
-    public AssetService(AssetsDbContext context)
+    public AssetService(IConnectionMultiplexer muxer, AssetsDbContext context)
     {
         _context = context;
+        _redis = muxer.GetDatabase();
     }
 
     public async Task<AssetsEvent?> GetAssetById(int id)
     {
         var asset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
-        //if (asset != null)
-        //{
-        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
-        //    if (live != null)
-        //        asset.LiveAssets = live;
-        //}
         return asset;
     }
 
@@ -49,9 +49,9 @@ public class AssetService : IAssetService
         fullAsset.AssetSerial = asset.AssetSerial;
         fullAsset.AssetType = asset.AssetType;
         fullAsset.UnitId = asset.UnitId;
+        _context.Assets.Update(fullAsset);
         await _context.SaveChangesAsync();
-        Console.WriteLine(_context.ChangeTracker.HasChanges());
-        return _context.ChangeTracker.HasChanges();
+        return true;
 
     }
 
@@ -69,27 +69,32 @@ public class AssetService : IAssetService
     public async Task<IEnumerable<AssetsEvent>> GetAllWithStatus()
     {
         var query = await _context.Assets.Include(a => a.LiveAssets).ToListAsync();
-
-        //foreach (AssetsEvent asst in query)
-        //{
-        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
-        //    if (live != null)
-        //        asst.LiveAssets = live;
-        //}
         return query;
     }
 
     public async Task<AssetsEvent?> GetFullAssetWithStatus(int id)
     {
-        var query = _context.Assets.Include(a => a.LiveAssets).AsQueryable();
-        var asset = await query.FirstOrDefaultAsync(a => a.Id == id);
-        //if (asset != null)
-        //{
-        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
-        //    if (live != null)
-        //        asset.LiveAssets = live;
-        //}
-        return asset;
+        string? json;
+        var key = id.ToString();
+        Console.WriteLine($"Key: {key}");
+        json = await _redis.StringGetAsync(key);
+        Console.WriteLine($"this is json {json}");
+        if (string.IsNullOrEmpty(json) ||json == null)
+        {
+            var query = _context.Assets.Include(a => a.LiveAssets).AsQueryable();
+            var asset = await query.FirstOrDefaultAsync(a => a.Id == id);
+            if (asset != null)
+            {
+                Console.WriteLine(JsonSerializer.Serialize(asset));
+                var setTask = _redis.StringSetAsync(key, JsonSerializer.Serialize(asset));
+                var expireTask = _redis.KeyExpireAsync(key, TimeSpan.FromMinutes(5));
+                await Task.WhenAll(setTask, expireTask);
+            }
+
+            return asset;   
+        }
+        var asst = JsonSerializer.Deserialize<AssetsEvent>(json);
+        return asst;
     }
 
 
@@ -104,4 +109,6 @@ public class AssetService : IAssetService
         //}
         return assets;
     }
+
+
 }

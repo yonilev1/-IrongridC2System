@@ -30,4 +30,10 @@ public class OperationsReportsController : ControllerBase
         return Ok(data);
     }
 
+    [HttpGet("summary-by-unit")]
+    public async Task<ActionResult<IEnumerable<SummeryByUnit>>> GetSummaryByUnit()
+    {
+        return Ok(await _repository.GetSummaryByUnit());
+    }
+
 }

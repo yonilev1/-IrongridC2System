@@ -1,5 +1,6 @@
-﻿using AssetsApi.Models;
-using AssetsApi.Dtos;
+﻿using AssetsApi.Dtos;
+using AssetsApi.Models;
+using StackExchange.Redis;
 namespace AssetsApi.Services;
 
 public interface IAssetService

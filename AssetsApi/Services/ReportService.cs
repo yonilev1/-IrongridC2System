@@ -67,4 +67,35 @@ public class ReportService : IReportService
         }
         return assetsPetUnit;
     }
+
+    public async Task<IEnumerable<SummeryByUnit>> GetSummaryByUnit()
+    {
+        var summery = await _context.Assets.
+            Include(u => u.LiveAssets).
+            Include(a => a.Unit)
+            .GroupBy(u => u.UnitId)
+            .ToListAsync();
+
+        List<SummeryByUnit> sumAll = new List<SummeryByUnit>();
+
+        foreach (var sum in summery)
+        {
+            SummeryByUnit tempSum = new SummeryByUnit
+            {
+                UnitId = sum.Key,
+                UnitName = _context.Units.FirstOrDefault(u => u.Id == sum.Key).UnitName,
+                Sector = _context.Units.FirstOrDefault(u => u.Id == sum.Key).Sector,
+                TotalAssets = _context.Assets.Count(a => a.UnitId == sum.Key),
+                StableAssets = _context.Assets.Include(a => a.LiveAssets).Where(a => a.LiveAssets != null && a.UnitId == sum.Key)
+                .Count(a => a.LiveAssets.ProcessedStatus == "Stable"),
+                WarningAssets = _context.Assets.Include(a => a.LiveAssets).Where(a => a.LiveAssets != null && a.UnitId == sum.Key)
+                .Count(a => a.LiveAssets.ProcessedStatus == "Warning"),
+                UnVerifiedAssets = _context.Assets.Include(a => a.LiveAssets).Where(a => a.LiveAssets != null && a.UnitId == sum.Key)
+                .Count(a => a.LiveAssets.IsVerified == false)
+            };
+            sumAll.Add(tempSum);
+        }
+
+        return sumAll;
+    }
 }

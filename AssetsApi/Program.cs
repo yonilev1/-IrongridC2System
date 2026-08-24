@@ -1,6 +1,7 @@
 using AssetsApi.Services;
 using Consumer.Data;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
 var app = builder.Build();
 
