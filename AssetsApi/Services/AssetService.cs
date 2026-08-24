@@ -91,4 +91,16 @@ public class AssetService : IAssetService
         return asset;
     }
 
+
+    public async Task<IEnumerable<AssetsEvent>> GetAssetByStatus(string status)
+    {
+        var assets = await _context.Assets.Where(a => a.LiveAssets.ProcessedStatus == status).ToListAsync();
+        foreach(AssetsEvent asst in assets)
+        {
+            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
+            if (live != null)
+                asst.LiveAssets = live;
+        }
+        return assets;
+    }
 }

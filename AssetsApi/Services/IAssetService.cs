@@ -10,4 +10,5 @@ public interface IAssetService
     Task<bool> DeleteAsset(int id);
     Task<IEnumerable<AssetsEvent>> GetAllWithStatus();
     Task<AssetsEvent?> GetFullAssetWithStatus(int id);
+    Task<IEnumerable<AssetsEvent>> GetAssetByStatus(string status);
 }

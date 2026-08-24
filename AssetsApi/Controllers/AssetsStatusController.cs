@@ -29,4 +29,11 @@ public class AssetsStatusController : ControllerBase
             return NotFound();
         return Ok(asset);
     }
+
+    [HttpGet("status")]
+    public async Task<ActionResult<IEnumerable<AssetsEvent>>> GetAssetByStatus(string status)
+    {
+        return Ok(await _repository.GetAssetByStatus(status));
+    }
+
 }
