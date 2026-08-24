@@ -16,6 +16,8 @@ builder.Services.AddDbContext<AssetsDbContext>(options =>
 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

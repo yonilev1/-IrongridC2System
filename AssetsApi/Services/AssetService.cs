@@ -68,39 +68,40 @@ public class AssetService : IAssetService
 
     public async Task<IEnumerable<AssetsEvent>> GetAllWithStatus()
     {
-        var query = await _context.Assets.ToListAsync();
+        var query = await _context.Assets.Include(a => a.LiveAssets).ToListAsync();
 
-        foreach (AssetsEvent asst in query)
-        {
-            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
-            if (live != null)
-                asst.LiveAssets = live;
-        }
+        //foreach (AssetsEvent asst in query)
+        //{
+        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
+        //    if (live != null)
+        //        asst.LiveAssets = live;
+        //}
         return query;
     }
 
     public async Task<AssetsEvent?> GetFullAssetWithStatus(int id)
     {
-        var asset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
-        if (asset != null)
-        {
-            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
-            if (live != null)
-                asset.LiveAssets = live;
-        }
+        var query = _context.Assets.Include(a => a.LiveAssets).AsQueryable();
+        var asset = await query.FirstOrDefaultAsync(a => a.Id == id);
+        //if (asset != null)
+        //{
+        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == id);
+        //    if (live != null)
+        //        asset.LiveAssets = live;
+        //}
         return asset;
     }
 
 
     public async Task<IEnumerable<AssetsEvent>> GetAssetByStatus(string status)
     {
-        var assets = await _context.Assets.Where(a => a.LiveAssets.ProcessedStatus == status).ToListAsync();
-        foreach(AssetsEvent asst in assets)
-        {
-            AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
-            if (live != null)
-                asst.LiveAssets = live;
-        }
+        var assets = await _context.Assets.Where(a => a.LiveAssets.ProcessedStatus == status).Include(a => a.LiveAssets).ToListAsync();
+        //foreach(AssetsEvent asst in assets)
+        //{
+        //    AssetLiveStatuses? live = await _context.AssetLiveStatuses.FirstOrDefaultAsync(a => a.AssetId == asst.Id);
+        //    if (live != null)
+        //        asst.LiveAssets = live;
+        //}
         return assets;
     }
 }
