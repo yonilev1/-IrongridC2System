@@ -18,8 +18,8 @@ public class AssetsDbContext : DbContext
 
         modelBuilder.Entity<AssetLiveStatuses>()
             .HasOne(l => l.Asset)
-            .WithMany(a => a.LiveAssets)
-            .HasForeignKey(l => l.AssetId)
+            .WithOne(a => a.LiveAssets)
+            .HasForeignKey<AssetLiveStatuses>(l => l.AssetId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AssetsEvent>()
