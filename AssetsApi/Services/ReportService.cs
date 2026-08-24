@@ -40,4 +40,31 @@ public class ReportService : IReportService
         }
         return assetsWithStatus;
     }
+
+    public async Task<IEnumerable<AssetsStatusPerUnit>?> GetAllAssetsStatusOfEveryUnit(int unitId)
+    {
+        var unit = await _context.Units.FirstOrDefaultAsync(u => u.Id == unitId);
+        if (unit == null)
+            return null;
+
+        var assets = await _context.Assets.Where(u => u.Unit.Id == unitId).Include(u => u.LiveAssets).Include(a => a.Unit).ToListAsync();
+
+        List<AssetsStatusPerUnit> assetsPetUnit = new List<AssetsStatusPerUnit>();
+
+        foreach (AssetsEvent ast in assets)
+        {
+            
+            AssetsStatusPerUnit details = new AssetsStatusPerUnit
+            {
+                AssetId = ast.Id,
+                AssetSerial = ast.AssetSerial,
+                AssetType = ast.AssetType,
+                PtocessedStatus = ast.LiveAssets != null ? ast.LiveAssets.ProcessedStatus : null,
+                IsVerified = ast.LiveAssets != null ? ast.LiveAssets.IsVerified :  null,
+                LastUpdate = ast.LiveAssets != null ? ast.LiveAssets.LastUpdate : null
+            };
+            assetsPetUnit.Add(details);
+        }
+        return assetsPetUnit;
+    }
 }

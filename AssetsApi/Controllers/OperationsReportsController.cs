@@ -19,4 +19,15 @@ public class OperationsReportsController : ControllerBase
     {
         return Ok(await _repository.GetCriticalAssets());
     }
+
+    [HttpGet("unit/{unitId}/assets")]
+    public async Task<ActionResult<IEnumerable<AssetsStatusPerUnit>?>> GetAllAssetsStatusOfEveryUnit(int unitId)
+    {
+        var data = await _repository.GetAllAssetsStatusOfEveryUnit(unitId);
+
+        if (data == null)
+            return NotFound();
+        return Ok(data);
+    }
+
 }
