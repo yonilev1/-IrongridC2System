@@ -1,4 +1,5 @@
-﻿using AssetsApi.Models;
+﻿using AssetsApi.Dtos;
+using AssetsApi.Models;
 using Consumer.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,32 @@ public class AssetService : IAssetService
 
         if (await _context.Units.FirstOrDefaultAsync(a => a.Id == unit.Id) == null)
             return false;
+        return true;
+    }
+
+    public async Task<bool> UpdateAsset(int id, UpdateAsset asset)
+    {
+        var fullAsset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
+        if (fullAsset == null)
+            return false;
+
+        fullAsset.AssetSerial = asset.AssetSerial;
+        fullAsset.AssetType = asset.AssetType;
+        fullAsset.UnitId = asset.UnitId;
+        await _context.SaveChangesAsync();
+        Console.WriteLine(_context.ChangeTracker.HasChanges());
+        return _context.ChangeTracker.HasChanges();
+
+    }
+
+    public async Task<bool> DeleteAsset(int id)
+    {
+        var asset = await _context.Assets.FirstOrDefaultAsync(a => a.Id == id);
+        if (asset == null)
+            return false;
+
+        _context.Assets.Remove(asset);
+        await _context.SaveChangesAsync();
         return true;
     }
 }

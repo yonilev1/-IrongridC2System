@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AssetsApi.Services;
+﻿using AssetsApi.Dtos;
 using AssetsApi.Models;
+using AssetsApi.Services;
+using Microsoft.AspNetCore.Mvc;
 namespace AssetsApi.Controllers;
 
 [ApiController]
@@ -14,7 +15,7 @@ public class AssetsController :ControllerBase
         _repository = repository;
     }
 
-    [HttpGet("id")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<AssetsEvent>> GetAssetById(int id)
     {
         var asset = await _repository.GetAssetById(id);
@@ -34,4 +35,24 @@ public class AssetsController :ControllerBase
         
         return BadRequest();
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAsset(int id, UpdateAsset asset)
+    {
+        var updated = await _repository.UpdateAsset(id, asset);
+        if (updated)
+            return NoContent();
+        return NotFound();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsset(int id)
+    {
+        var deleted = await _repository.DeleteAsset(id);
+
+        if (deleted)
+            return NoContent();
+        return NotFound();
+    }
+
 }
